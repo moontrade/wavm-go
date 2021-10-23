@@ -11,8 +11,13 @@ package wavm
 */
 import "C"
 import (
+	_ "github.com/moontrade/wavm-go/packaged"
 	"math"
 )
+
+func init() {
+
+}
 
 var (
 	EMPTY = C.CString("")
