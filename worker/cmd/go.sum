@@ -1,4 +1,2 @@
-github.com/moontrade/wavm-go v0.0.0-20211023161032-7e8e00591e87 h1:vhzyuApys4JhRZ4JWhu0tc+/Sxh+Pdn3Q9jo+8oXdWk=
-github.com/moontrade/wavm-go v0.0.0-20211023161032-7e8e00591e87/go.mod h1:a+D6o7hJsbewQPXUyLGoiT4eVqc+ESybJOiynPomN/w=
 github.com/moontrade/wavm-go v0.2.0 h1:uy/P41cKKr3vpDR3KG+4DenJb+xlyUfeENCb25VuVSc=
 github.com/moontrade/wavm-go v0.2.0/go.mod h1:a+D6o7hJsbewQPXUyLGoiT4eVqc+ESybJOiynPomN/w=
