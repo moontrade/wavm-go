@@ -11,8 +11,9 @@ package wavm
 */
 import "C"
 import (
-	_ "github.com/moontrade/wavm-go/packaged"
 	"math"
+
+	_ "github.com/moontrade/wavm-go/packaged"
 )
 
 func init() {
