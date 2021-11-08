@@ -11,12 +11,11 @@ import "C"
 import (
 	"fmt"
 	"github.com/moontrade/wavm-go"
-	"github.com/moontrade/wavm-go/worker/tsc"
 	"unsafe"
 )
 
 func Now() int64 {
-	return tsc.UnixNano()
+	return runtimeNano()
 }
 
 type Worker struct {

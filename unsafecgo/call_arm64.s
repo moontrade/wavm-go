@@ -7,6 +7,7 @@
 // +build amd64 arm64
 // +build linux darwin
 
+#include "go_asm.h"
 #include "headers.h"
 #include "textflag.h"
 
@@ -24,10 +25,10 @@
 // Safer to add build tag "libfuzzer" to hook into the auto-generated "go_asm.h".
 // However, it's about ~1ns slower per call because of linking overhead somehow.
 
-#define g_m 48
-#define g_sched 56
-#define gobuf_sp 0
-#define m_g0 0
+//#define g_m 48
+//#define g_sched 56
+//#define gobuf_sp 0
+//#define m_g0 0
 
 // func runtime·libfuzzerCall(fn, arg0, arg1 uintptr)
 // Calls C function fn from libFuzzer and passes 2 arguments to it.

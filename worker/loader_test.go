@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/moontrade/wavm-go"
-	"github.com/moontrade/wavm-go/worker/tsc"
 )
 
 var (
@@ -18,8 +17,13 @@ var (
 
 func init() {
 	if runtime.GOOS == "darwin" {
-		file, _ = os.ReadFile("testdata/main.darwin_amd64")
-		fileObject, _ = os.ReadFile("testdata/main_object.darwin_amd64")
+		if runtime.GOARCH == "arm64" {
+			file, _ = os.ReadFile("testdata/main.darwin_arm64")
+			fileObject, _ = os.ReadFile("testdata/main_object.darwin_arm64")
+		} else if runtime.GOARCH == "amd64" {
+			file, _ = os.ReadFile("testdata/main.darwin_amd64")
+			fileObject, _ = os.ReadFile("testdata/main_object.darwin_amd64")
+		}
 	} else if runtime.GOOS == "linux" {
 		file, _ = os.ReadFile("testdata/main.linux_amd64")
 		fileObject, _ = os.ReadFile("testdata/main_object.linux_amd64")
@@ -52,11 +56,11 @@ func BenchmarkClock(b *testing.B) {
 		}
 	})
 
-	b.Run("tsc.UnixNano()", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			tsc.UnixNano()
-		}
-	})
+	//b.Run("tsc.UnixNano()", func(b *testing.B) {
+	//	for i := 0; i < b.N; i++ {
+	//		tsc.UnixNano()
+	//	}
+	//})
 
 	b.Run("runtime.nanoTime", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
@@ -75,10 +79,11 @@ func TestCompile(t *testing.T) {
 	engine := wavm.NewEngine()
 	buf := engine.Compile(fileWASM, nil)
 	println("precompiled module", len(buf))
-	os.WriteFile("testdata/main.linux_amd64", buf, 0755)
+	os.WriteFile("testdata/main.darwin_arm64", buf, 0755)
 
 	buf = engine.CompileObject(fileWASM, buf)
 	println("object", len(buf))
+	os.WriteFile("testdata/main_object.darwin_arm64", buf, 0755)
 }
 
 func BenchmarkCompile(b *testing.B) {

@@ -34,8 +34,8 @@ func TestSleep(t *testing.T) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 	for i := 0; i < 10000; i++ {
-		//NonBlocking((*byte)(cgo.Usleep), uintptr(time.Second), 0)
-		cgo.NonBlocking((*byte)(cgo.Usleep), uintptr(time.Second/1000), 0)
+		NonBlocking((*byte)(cgo.Usleep), uintptr(time.Second), 0)
+		//cgo.NonBlocking((*byte)(cgo.Usleep), uintptr(time.Second/1000), 0)
 		//cgo.DoUsleep(int64(time.Second/1000))
 		println(time.Now().UnixNano())
 	}

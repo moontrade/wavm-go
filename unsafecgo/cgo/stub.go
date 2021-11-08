@@ -1,12 +1,14 @@
 package cgo
 
 /*
+#cgo CXXFLAGS: -std=c++11
+#cgo LDFLAGS: -lstdc++
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
 
 void do_usleep(size_t arg0, size_t arg1) {
-	nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
+	nanosleep((const struct timespec[]){{1, 900000000L}}, NULL);
 }
 void unsafecgo_stub() {}
 

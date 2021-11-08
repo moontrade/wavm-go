@@ -5,6 +5,7 @@ package wavm
 //#cgo linux,amd64 LDFLAGS: -lstdc++
 #cgo linux,amd64 LDFLAGS: -Wl,-rpath,${SRCDIR}/packaged/lib/linux_amd64 -L${SRCDIR}/packaged/lib/linux_amd64
 #cgo darwin,amd64 LDFLAGS: -Wl,-rpath,${SRCDIR}/packaged/lib/darwin_amd64 -L${SRCDIR}/packaged/lib/darwin_amd64
+#cgo darwin,arm64 LDFLAGS: -Wl,-rpath,${SRCDIR}/packaged/lib/darwin_arm64 -L${SRCDIR}/packaged/lib/darwin_arm64
 #cgo LDFLAGS: -lWAVM
 #include <stdlib.h>
 #include "wavm-c.h"
