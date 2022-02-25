@@ -18,20 +18,32 @@ func main() {
 
 	if runtime.GOOS == "darwin" {
 		println("darwin detected")
-		file, err = os.ReadFile("./main.darwin_amd64")
-		if err != nil {
-			panic(err)
+		if runtime.GOARCH == "arm64" {
+			file, err = os.ReadFile("./main.darwin_arm64")
+		} else if runtime.GOARCH == "amd64" {
+			file, err = os.ReadFile("./main.darwin_amd64")
+			if err != nil {
+				panic(err)
+			}
+			fileObject, err = os.ReadFile("./main_object.darwin_amd64")
+		} else {
+			panic("unsupported arch")
 		}
-		fileObject, err = os.ReadFile("./main_object.darwin_amd64")
 		if err != nil {
 			panic(err)
 		}
 	} else if runtime.GOOS == "linux" {
-		file, err = os.ReadFile("./main.linux_amd64")
-		if err != nil {
-			panic(err)
+		if runtime.GOARCH == "arm64" {
+			file, err = os.ReadFile("./main.linux_arm64")
+		} else if runtime.GOARCH == "amd64" {
+			file, err = os.ReadFile("./main.linux_amd64")
+			if err != nil {
+				panic(err)
+			}
+			fileObject, err = os.ReadFile("./main_object.linux_amd64")
+		} else {
+			panic("unsupported arch")
 		}
-		fileObject, err = os.ReadFile("./main_object.linux_amd64")
 		if err != nil {
 			panic(err)
 		}
