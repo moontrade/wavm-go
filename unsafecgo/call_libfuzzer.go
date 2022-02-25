@@ -4,7 +4,10 @@
 
 package unsafecgo
 
-import _ "unsafe"
+import (
+	"github.com/moontrade/wavm-go/unsafecgo/cgo"
+	_ "unsafe"
+)
 
 // NonBlocking C function fn without going all the way through cgo.
 // Example: NonBlocking((*byte)(C.my_c_func), 0, 0)
@@ -16,5 +19,5 @@ import _ "unsafe"
 func NonBlocking(fn *byte, arg0, arg1 uintptr)
 
 func Blocking(fn *byte, arg0, arg1 uintptr) {
-	cgo.Call(fn, arg0, arg1)
+	cgo.Blocking(fn, arg0, arg1)
 }
