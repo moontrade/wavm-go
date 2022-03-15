@@ -565,6 +565,15 @@ WASM_C_API own wasm_instance_t* wasm_instance_new(wasm_store_t*,
 												  own wasm_trap_t**,
 												  const char* debug_name);
 
+WASM_C_API own wasm_instance_t* wasm_instance_new_with_quota(wasm_store_t* store,
+													const wasm_module_t* module,
+													const wasm_extern_t* const imports[],
+													own wasm_trap_t** out_trap,
+													int32_t max_table_elems,
+													int32_t max_memory_pages,
+												 	int32_t call_start_function,
+													const char* debug_name);
+
 WASM_C_API size_t wasm_instance_num_exports(const wasm_instance_t*);
 WASM_C_API wasm_extern_t* wasm_instance_export(const wasm_instance_t*, size_t index);
 

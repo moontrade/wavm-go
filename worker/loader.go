@@ -10,7 +10,7 @@ import (
 )
 
 func DefaultEngine() *wavm.Engine {
-	return wavm.NewEngineWithConfig(wavm.NewConfigAll())
+	return wavm.NewEngineWithConfig(wavm.NewConfigAll().SetMultiMemory(false))
 }
 
 type Loader struct {
@@ -77,13 +77,18 @@ func (wl *Loader) findModuleExport(name string) *wavm.Export {
 	return nil
 }
 
-func (wl *Loader) Load(precompiled, trace bool, binary []byte) (*Worker, error) {
+func (wl *Loader) Load(precompiled, trace bool, binary []byte, maxTableElems, maxMemoryPages int32) (*Worker, error) {
 	wl.mu.Lock()
 	defer wl.mu.Unlock()
 
 	// Init Engine
 	engine := wl.engineFactory()
 
+	//compartment := wl.compartment
+	//if compartment == nil {
+	//	wl.compartment = engine.NewCompartment("")
+	//	compartment = wl.compartment
+	//}
 	compartment := engine.NewCompartment("")
 
 	// Init store
@@ -173,7 +178,7 @@ func (wl *Loader) Load(precompiled, trace bool, binary []byte) (*Worker, error) 
 
 	// New instance
 	var trap *wavm.Trap
-	instance := store.NewInstance(module, wl.imports, &trap, "")
+	instance := store.NewInstanceWithQuota(module, wl.imports, &trap, maxTableElems, maxMemoryPages, false, "")
 	// Error?
 	if trap != nil {
 		// Clean up.
@@ -255,10 +260,6 @@ func (wl *Loader) Load(precompiled, trace bool, binary []byte) (*Worker, error) 
 	//C.moontrade_memory_set(memory)
 	if trace {
 		fmt.Println("data", uintptr(unsafe.Pointer(data)), "pages", uint(pages), "size", size)
-	}
-
-	if wl.compartment == nil {
-		wl.compartment = compartment.Clone()
 	}
 
 	worker.init()

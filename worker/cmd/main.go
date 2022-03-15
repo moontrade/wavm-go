@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"github.com/moontrade/wavm-go/worker"
+	"math"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"time"
-
-	"github.com/moontrade/wavm-go/worker"
 )
 
 func main() {
@@ -50,9 +52,16 @@ func main() {
 	}
 
 	fileWASM, _ = os.ReadFile("./main.wasm")
+	_ = file
 	_ = fileObject
 	_ = fileWASM
 
+	info, ok := debug.ReadBuildInfo()
+	if ok {
+		fmt.Println(info)
+	}
+
+	debug.FreeOSMemory()
 	loader := worker.NewLoader(worker.DefaultEngine)
 
 	workers := make([]*worker.Worker, 0, 128)
@@ -60,17 +69,39 @@ func main() {
 
 	println("loading", count, "workers")
 	for i := 0; i < count; i++ {
-		worker, err := loader.Load(true, false, file)
+		wkr, err := loader.Load(true, false, file, math.MaxUint16, 16)
 		if err != nil {
 			panic(err)
 		}
-		err = worker.Start()
+		err = wkr.Start()
 		if err != nil {
 			panic(err)
 		}
 
-		workers = append(workers, worker)
+		workers = append(workers, wkr)
+
+		//wkr.Close()
+
+		var mstats runtime.MemStats
+		runtime.ReadMemStats(&mstats)
+		var stats debug.GCStats
+		debug.ReadGCStats(&stats)
+		fmt.Println(stats.NumGC, stats.PauseTotal.String(), time.Duration(stats.NumGC)/stats.PauseTotal, "heap in use", mstats.HeapInuse, "heap sys", mstats.HeapSys)
 	}
+
+	for i := 0; i < 100; i++ {
+		var stats debug.GCStats
+		debug.ReadGCStats(&stats)
+		fmt.Println(stats.NumGC, stats.PauseTotal.String())
+		time.Sleep(time.Second)
+	}
+
+	//for _, wkr := range workers {
+	//	err = wkr.Close()
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//}
 
 	//_ = worker.Close()
 	time.Sleep(time.Hour)

@@ -3,7 +3,10 @@ package wavm
 // #include <stdlib.h>
 // #include "wavm-c.h"
 import "C"
-import "unsafe"
+import (
+	"math"
+	"unsafe"
+)
 
 type Instance C.wasm_instance_t
 
@@ -30,6 +33,44 @@ func NewInstance(
 	))
 }
 
+func NewInstanceWithQuota(
+	store *Store,
+	module *Module,
+	imports []*Extern,
+	outTrap **Trap,
+	maxTableElems int32,
+	maxMemoryPages int32,
+	callStartFunction bool,
+	debugName string,
+) *Instance {
+	if maxTableElems < 1 {
+		maxTableElems = math.MaxUint16
+	}
+	if maxMemoryPages < 1 {
+		maxMemoryPages = 1
+	}
+	var name *C.char
+	if debugName == "" {
+		name = EMPTY
+	} else {
+		name = C.CString(debugName)
+		defer C.free(unsafe.Pointer(name))
+	}
+	callStart := C.int32_t(0)
+	if callStartFunction {
+		callStart = C.int32_t(1)
+	}
+	return (*Instance)(C.wasm_instance_new_with_quota(
+		(*C.wasm_store_t)(store),
+		(*C.wasm_module_t)(module),
+		(**C.wasm_extern_t)(unsafe.Pointer(&imports[0])),
+		(**C.wasm_trap_t)(unsafe.Pointer(outTrap)),
+		C.int32_t(maxTableElems), C.int32_t(maxMemoryPages),
+		callStart,
+		name,
+	))
+}
+
 func (s *Store) NewInstance(
 	module *Module,
 	imports []*Extern,
@@ -37,6 +78,17 @@ func (s *Store) NewInstance(
 	debugName string,
 ) *Instance {
 	return NewInstance(s, module, imports, outTrap, debugName)
+}
+
+func (s *Store) NewInstanceWithQuota(
+	module *Module,
+	imports []*Extern,
+	outTrap **Trap,
+	maxTableElems, maxMemoryPages int32,
+	callStartFunction bool,
+	debugName string,
+) *Instance {
+	return NewInstanceWithQuota(s, module, imports, outTrap, maxTableElems, maxMemoryPages, callStartFunction, debugName)
 }
 
 func (inst *Instance) Close() error {
