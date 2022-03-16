@@ -69,7 +69,7 @@ func main() {
 
 	println("loading", count, "workers")
 	for i := 0; i < count; i++ {
-		wkr, err := loader.Load(true, false, file, math.MaxUint16, 16)
+		wkr, err := loader.Load(true, false, file, math.MaxUint16, 8)
 		if err != nil {
 			panic(err)
 		}
